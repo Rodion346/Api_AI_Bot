@@ -4,7 +4,7 @@ from pydantic import UUID4, BaseModel
 
 
 class BaseUser(BaseModel):
-    id: int
+    id: str
 
 class UserIn(BaseUser):
     referer_id: Optional[int] = 0

@@ -10,10 +10,10 @@ class UserService:
         stmt = await self.user_repo.create_user(schemas)
         return stmt
 
-    async def read(self, user_id: int):
+    async def read(self, user_id: str):
         query = await self.user_repo.read_user(user_id)
         return query
 
-    async def update(self, user_id: int, new_balance: int):
+    async def update(self, user_id: str, new_balance: int):
         stmt = await self.user_repo.update_user_balance(user_id, new_balance)
         return stmt

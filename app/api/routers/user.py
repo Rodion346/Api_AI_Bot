@@ -16,12 +16,12 @@ async def create_user(user: UserIn, user_service: UserService = Depends(get_user
     return user
 
 @router_user.post("/user/{user_id}", response_model=UserOut)
-async def update_user_balance(user_id: int, new_balance: int, user_service: UserService = Depends(get_user_service)):
+async def update_user_balance(user_id: str, new_balance: int, user_service: UserService = Depends(get_user_service)):
     user_info = await user_service.update(user_id, new_balance)
     return user_info
 
 @router_user.get("/user/{user_id}", response_model=UserOut)
-async def get_user_info(user_id: int, user_service: UserService = Depends(get_user_service)):
+async def get_user_info(user_id: str, user_service: UserService = Depends(get_user_service)):
     user_info = await user_service.read(user_id)
     return user_info
 
