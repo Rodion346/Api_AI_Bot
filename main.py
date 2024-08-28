@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешенные заголовки
 )
 
-app.include_router(router_user)
+
 
 BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
 bot = Bot(token=BOT_TOKEN)
