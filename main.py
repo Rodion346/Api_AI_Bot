@@ -49,10 +49,8 @@ async def process_form_data(status: str, id_gen: str, time_gen: str, res_image: 
         error_handler(str(err))
 
 # Отправка изображения в Telegram
-async def send_image_to_telegram(image: UploadFile):
-    file_bytes = await image.read()
-    input_file = types.InputFile(image.filename, image)
-    await bot.send_photo(CHAT_ID, input_file)
+async def send_image_to_telegram(image):
+    await bot.send_photo(CHAT_ID, image)
 
 @app.post("/webhook")
 async def handle_webhook(
