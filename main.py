@@ -1,5 +1,5 @@
 import aiofiles
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, types
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routers.user import router_user
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
@@ -8,8 +8,6 @@ import os
 
 app = FastAPI()
 
-bot = Bot(token='6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg')
-dp = Dispatcher(bot)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,69 +19,52 @@ app.add_middleware(
 
 app.include_router(router_user)
 
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
+CHAT_ID = '6640814090'
+bot = Bot(token=BOT_TOKEN)
 
+# Обработчик ошибок
 def error_handler(error: str) -> None:
-    """
-    Handles errors by logging the error message.
-    @param error: The error message to log.
-    """
     print("errorHandler", error)
 
-async def send_image_to_telegram(file_path: str) -> None:
-    """
-    Sends an image to a specified Telegram chat.
-    @param file_path: The path to the image file to send.
-    """
-    try:
-        async with aiofiles.open(file_path, 'rb') as image_file:
-            await bot.send_photo(chat_id=6640814090, photo=image_file)
-        print(f"Image sent to Telegram chat ID: {6640814090}")
-    except Exception as err:
-        error_handler(f"Failed to send image to Telegram: {err}")
+# Проверка метода POST
+def is_post_method(req: Request) -> bool:
+    return req.method == 'POST'
 
-def process_form_data(status: str, id_gen: str, time_gen: str, res_image: UploadFile) -> str:
-    """
-    Processes the form data from the request.
-    @param status: The status from the form data.
-    @param id_gen: The ID from the form data.
-    @param time_gen: The generation time from the form data.
-    @param res_image: The uploaded file from the form data.
-    @returns: The file path where the image is saved.
-    """
+# Проверка наличия multipart/form-data
+def is_multipart_form_data(req: Request) -> bool:
+    return 'multipart/form-data' in req.headers.get('content-type', '')
+
+# Обработка данных формы
+async def process_form_data(status: str, id_gen: str, time_gen: str, res_image: UploadFile):
     try:
         if status != '200':
-            raise Exception("Image generation failed")
-        elif res_image.filename == '':
-            raise Exception("resImage is not a file")
+            raise HTTPException(status_code=400, detail="Invalid status")
 
-        file_path = os.path.join(UPLOAD_FOLDER, 'resImage.png')
-        with open(file_path, "wb") as buffer:
-            buffer.write(res_image.file.read())
+        print(f"processFormData ID: {id_gen}, Time: {time_gen}")
 
-        print("processFormData", f"ID: {id_gen}, Time: {time_gen}")
-        return file_path
+        # Отправка изображения в Telegram
+        await send_image_to_telegram(res_image)
     except Exception as err:
         error_handler(str(err))
-        raise HTTPException(status_code=400, detail=str(err))
 
+# Отправка изображения в Telegram
+async def send_image_to_telegram(image: UploadFile):
+    file_bytes = await image.read()
+    await bot.send_photo(CHAT_ID, types.InputFile(image.filename, file_bytes))
 
-@app.post('/webhook')
+@app.post("/webhook")
 async def handle_webhook(
+    request: Request,
     status: str = Form(...),
     id_gen: str = Form(...),
     time_gen: str = Form(...),
     res_image: UploadFile = File(...)
 ):
-    """
-    Main handler function for the webhook endpoint.
-    @param status: The status from the form data.
-    @param id_gen: The ID from the form data.
-    @param time_gen: The generation time from the form data.
-    @param res_image: The uploaded file from the form data.
-    @returns: A JSON response indicating the result of the request handling.
-    """
-    file_path = process_form_data(status, id_gen, time_gen, res_image)
-    await send_image_to_telegram(file_path)
+    if not is_post_method(request):
+        raise HTTPException(status_code=405, detail="Method Not Allowed")
+    if not is_multipart_form_data(request):
+        raise HTTPException(status_code=400, detail="Bad Request")
+
+    await process_form_data(status, id_gen, time_gen, res_image)
     return JSONResponse(content={"message": "OK"}, status_code=200)
