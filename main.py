@@ -22,7 +22,6 @@ app.add_middleware(
 app.include_router(router_user)
 
 BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
-CHAT_ID = '6640814090'
 bot = Bot(token=BOT_TOKEN)
 
 
@@ -48,12 +47,12 @@ async def process_form_data(status: str, id_gen: str, time_gen: str, res_image: 
         print(f"processFormData ID: {id_gen}, Time: {time_gen}")
 
         # Отправка изображения в Telegram
-        await send_image_to_telegram(res_image)
+        await send_image_to_telegram(res_image, id_gen)
     except Exception as err:
         error_handler(str(err))
 
 # Отправка изображения в Telegram
-async def send_image_to_telegram(image: UploadFile):
+async def send_image_to_telegram(image: UploadFile, CHAT_ID):
     image_bytes = await image.read()
 
     # Create an InputFile object using BytesIO
