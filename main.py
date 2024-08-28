@@ -1,3 +1,4 @@
+import io
 import aiofiles
 from aiogram import Bot, types
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,6 +23,8 @@ app.include_router(router_user)
 BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
 CHAT_ID = '6640814090'
 bot = Bot(token=BOT_TOKEN)
+
+
 
 # Обработчик ошибок
 def error_handler(error: str) -> None:
@@ -49,8 +52,10 @@ async def process_form_data(status: str, id_gen: str, time_gen: str, res_image: 
         error_handler(str(err))
 
 # Отправка изображения в Telegram
-async def send_image_to_telegram(image):
-    await bot.send_photo(CHAT_ID, image)
+async def send_image_to_telegram(image: UploadFile):
+    image_bytes = await image.read()
+    input_file = types.InputFile(io.BytesIO(image_bytes), filename=image.filename)
+    await bot.send_photo(chat_id=CHAT_ID, photo=input_file)
 
 @app.post("/webhook")
 async def handle_webhook(
