@@ -3,7 +3,7 @@ import aiofiles
 from aiogram import Bot, types
 from aiogram.types import InputFile, BufferedInputFile
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routers.user import router_user
+
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 
