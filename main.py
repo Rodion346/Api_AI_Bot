@@ -1,6 +1,7 @@
 import io
 import aiofiles
 from aiogram import Bot, types
+from aiogram.types import InputFile, BufferedInputFile
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routers.user import router_user
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
@@ -54,7 +55,11 @@ async def process_form_data(status: str, id_gen: str, time_gen: str, res_image: 
 # Отправка изображения в Telegram
 async def send_image_to_telegram(image: UploadFile):
     image_bytes = await image.read()
-    input_file = types.InputFile(io.BytesIO(image_bytes), filename=image.filename)
+
+    # Create an InputFile object using BytesIO
+    input_file = BufferedInputFile(image_bytes, filename=image.filename)
+
+    # Send the photo to the Telegram chat
     await bot.send_photo(chat_id=CHAT_ID, photo=input_file)
 
 @app.post("/webhook")
@@ -69,6 +74,6 @@ async def handle_webhook(
         raise HTTPException(status_code=405, detail="Method Not Allowed")
     if not is_multipart_form_data(request):
         raise HTTPException(status_code=400, detail="Bad Request")
-
+    print(type(res_image.file))
     await process_form_data(status, id_gen, time_gen, res_image)
     return JSONResponse(content={"message": "OK"}, status_code=200)
