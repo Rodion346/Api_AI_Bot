@@ -10,5 +10,7 @@ COPY . /app
 # Устанавливаем зависимости
 RUN pip install -r requirements.txt
 
+EXPOSE 8000
+
 # Команда для запуска FastAPI-приложения
 CMD ["alembic", "upgrade", "head"]
