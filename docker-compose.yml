@@ -7,6 +7,8 @@ services:
     command: ["sh", "-c", " sleep 5 && alembic upgrade head && uvicorn main:app --reload --host=0.0.0.0 --port=8000"]
     env_file:
       - .env-docker
+    depends_on:
+      - db
     ports:
       - "8000:8000"
   bot:
@@ -16,6 +18,9 @@ services:
     container_name: bot_container
     env_file:
       - .env-docker
+    depends_on:
+      - db
+      - fastapi
   db:
     image: postgres:15.1-alpine
     container_name: db
