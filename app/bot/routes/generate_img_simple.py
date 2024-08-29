@@ -7,7 +7,7 @@ simple_router = Router()
 
 @simple_router.callback_query(F.data == "simple")
 async def process_start_command(callback: types.CallbackQuery):
-    r = requests.get(f"http://127.0.0.1:8000/api/v1/user/{callback.message.from_user.id}")
+    r = requests.get(f"http://fastapi:8000/api/v1/user/{callback.message.from_user.id}")
     re = r.json()
     balance = re.get("balance")
     if balance < PRICE_SIMPLE:

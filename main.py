@@ -3,13 +3,22 @@ import aiofiles
 from aiogram import Bot, types
 from aiogram.types import InputFile, BufferedInputFile
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.database import engine
+from app.api.models import User
 from app.api.routers.user import router_user
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
-
+from sqladmin import Admin, ModelView
 
 app = FastAPI()
+admin = Admin(app, engine)
 
+class UserAdmin(ModelView, model=User):
+    column_list = [User.id, User.balance, User.referer_id]
+
+
+admin.add_view(UserAdmin)
 
 app.add_middleware(
     CORSMiddleware,

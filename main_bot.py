@@ -4,9 +4,9 @@ import logging
 from aiogram import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from routes.generate_img_clot import router, bot
-from routes.bot import start_router
-from routes.generate_img_simple import simple_router
+from app.bot.routes.generate_img_clot import router, bot
+from app.bot.routes.bot import start_router
+from app.bot.routes.generate_img_simple import simple_router
 
 dp = Dispatcher()
 
