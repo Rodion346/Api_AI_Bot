@@ -11,7 +11,7 @@ router_user = APIRouter(tags=["User"], prefix="/api/v1")
 
 
 
-@router_user.post("/db")
+@router_user.get("/db")
 async def create_user():
     result = subprocess.run(['alembic', 'upgrade', 'head'], check=True, capture_output=True, text=True)
     return result
