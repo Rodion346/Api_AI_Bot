@@ -3,7 +3,7 @@ import aiofiles
 from aiogram import Bot, types
 from aiogram.types import InputFile, BufferedInputFile
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routers.user import router_user
+
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 
@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешенные заголовки
 )
 
-app.include_router(router_user)
+
 
 BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
 bot = Bot(token=BOT_TOKEN)
