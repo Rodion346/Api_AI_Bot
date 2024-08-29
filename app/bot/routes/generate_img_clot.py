@@ -1,12 +1,9 @@
-from operator import index
-
 import requests
 from aiogram import Router, F, Bot, types
-from aiogram.enums import ContentType
-from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiohttp.web_fileresponse import content_type
+
+from app.config import PRICE_CLOT
 
 bot = Bot(token='6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg')
 router = Router()
@@ -121,5 +118,10 @@ async def handle_photo(message: types.Message):
 @router.callback_query(F.data == "smart")
 async def process_start_command(callback: types.CallbackQuery):
     kb = await create_keyboard_clot()
+    r = requests.get(f"http://127.0.0.1:8000/api/v1/user/{callback.message.from_user.id}")
+    re = r.json()
+    balance = re.get("balance")
+    if balance < PRICE_CLOT:
+        await callback.message.answer("Недостаточно средств, пополните баланс!")
     await callback.message.edit_reply_markup(reply_markup=None)
     await callback.message.answer('Задайте все параметры обработки:', reply_markup=kb.as_markup())
