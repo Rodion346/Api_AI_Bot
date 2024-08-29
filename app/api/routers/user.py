@@ -1,3 +1,5 @@
+import subprocess
+
 from fastapi import APIRouter, Depends
 
 from .depence import get_user_service
@@ -9,6 +11,10 @@ router_user = APIRouter(tags=["User"], prefix="/api/v1")
 
 
 
+@router_user.post("/db")
+async def create_user():
+    result = subprocess.run(['alembic', 'upgrade', 'head'], check=True, capture_output=True, text=True)
+    return result
 
 @router_user.post("/user", response_model=UserOut)
 async def create_user(user: UserIn, user_service: UserService = Depends(get_user_service)):
