@@ -35,7 +35,7 @@ async def niked(img_id: str, user_id: str):
         else: await asyncio.sleep(5)
 
 
-@router_user.post("/niked/{img_id}")
+@router_user.post("/niked/{user_id}")
 async def get_niked_img(img_id: str, user_id: str):
     task = BackgroundTask(niked, img_id, user_id)
     return JSONResponse({"status": "ok"}, background=task)
