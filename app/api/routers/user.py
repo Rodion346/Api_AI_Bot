@@ -26,7 +26,7 @@ bot = Bot(token=BOT_TOKEN)
 async def niked(img_id: str, user_id: str):
     while True:
         resp = requests.get(f"https://use.n8ked.app/api/deepnude/{img_id}")
-        await bot.send_message(chat_id=user_id, text=f"{resp}")
+        await bot.send_message(chat_id=user_id, text=f"{resp.content}, {resp.text}")
         resp = resp.json()
         stat = resp.get("status")
         if stat == "completed":
