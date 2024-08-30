@@ -27,7 +27,6 @@ header = {'Authorization': 'Bearer zsWQ5mwIh7BvrcoNDbrjU6eU2EvqicvDJdIz8LmZ88225
 async def niked(img_id: str, user_id: str):
     while True:
         resp = requests.get(f"https://use.n8ked.app/api/deepnude/{img_id}", headers=header)
-        await bot.send_message(chat_id=user_id, text=f"{resp.content}, {resp.text}")
         resp = resp.json()
         stat = resp.get("status")
         if stat == "completed":
