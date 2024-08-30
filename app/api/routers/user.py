@@ -26,7 +26,8 @@ header = {'Authorization': 'Bearer zsWQ5mwIh7BvrcoNDbrjU6eU2EvqicvDJdIz8LmZ88225
 
 
 async def niked(img_id: str, user_id: str):
-    while True:
+    a = 0
+    while a == 0:
         resp = requests.get(f"https://use.n8ked.app/api/deepnude/{img_id}", headers=header)
         resp = resp.json()
         stat = resp.get("status")
@@ -38,6 +39,7 @@ async def niked(img_id: str, user_id: str):
             last = base64.b64decode(img6_1)
             input_file = BufferedInputFile(last, filename=f"{user_id}")
             await bot.send_photo(chat_id=user_id, photo=input_file)
+            a = 1
         else: await asyncio.sleep(5)
 
 
