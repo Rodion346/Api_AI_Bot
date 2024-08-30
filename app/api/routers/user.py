@@ -21,11 +21,12 @@ router_user = APIRouter(tags=["User"], prefix="/api/v1")
 
 BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
 bot = Bot(token=BOT_TOKEN)
+header = {'Authorization': 'Bearer zsWQ5mwIh7BvrcoNDbrjU6eU2EvqicvDJdIz8LmZ88225bcf'}
 
 
 async def niked(img_id: str, user_id: str):
     while True:
-        resp = requests.get(f"https://use.n8ked.app/api/deepnude/{img_id}")
+        resp = requests.get(f"https://use.n8ked.app/api/deepnude/{img_id}", headers=header)
         await bot.send_message(chat_id=user_id, text=f"{resp.content}, {resp.text}")
         resp = resp.json()
         stat = resp.get("status")
