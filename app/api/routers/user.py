@@ -1,5 +1,4 @@
 import asyncio
-import base64
 import subprocess
 from venv import logger
 
@@ -34,9 +33,7 @@ async def niked(img_id: str, user_id: str):
             bas64: str = resp.get("output")
             img64 = bas64.split(",")
             img6 = img64[1].strip()
-            img6_1 = img6.encode()
-            last = base64.b64decode(img6_1)
-            input_file = BufferedInputFile(last, filename=f"{user_id}")
+            input_file = BufferedInputFile(img6, filename=f"{user_id}")
             await bot.send_photo(chat_id=user_id, photo=input_file)
         else: await asyncio.sleep(5)
 
