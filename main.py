@@ -11,6 +11,8 @@ from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from sqladmin import Admin, ModelView
 
+from app.config import TOKEN_BOT
+
 app = FastAPI()
 admin = Admin(app, engine)
 
@@ -30,8 +32,8 @@ app.add_middleware(
 
 app.include_router(router_user)
 
-BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
-bot = Bot(token=BOT_TOKEN)
+
+bot = Bot(token=TOKEN_BOT)
 
 
 

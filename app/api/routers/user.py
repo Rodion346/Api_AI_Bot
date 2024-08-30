@@ -16,12 +16,12 @@ from starlette.responses import JSONResponse
 from .depence import get_user_service
 from app.api.schemas.user import UserIn, UserOut
 from app.api.services.user import UserService
-
+from app.config import TOKEN_BOT
 
 router_user = APIRouter(tags=["User"], prefix="/api/v1")
 
-BOT_TOKEN = '6830235739:AAG0Bo5lnabU4hDVWlhPQmLtiMVePI2xRGg'
-bot = Bot(token=BOT_TOKEN)
+
+bot = Bot(token=TOKEN_BOT)
 header = {'Authorization': 'Bearer zsWQ5mwIh7BvrcoNDbrjU6eU2EvqicvDJdIz8LmZ88225bcf'}
 
 
