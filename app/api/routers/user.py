@@ -1,5 +1,6 @@
 import asyncio
 import subprocess
+from venv import logger
 
 import requests
 from aiogram import Bot
@@ -25,7 +26,7 @@ bot = Bot(token=BOT_TOKEN)
 async def niked(img_id: str, user_id: str):
     while True:
         resp = requests.get(f"https://use.n8ked.app/api/deepnude/{img_id}")
-        resp = resp.json()
+        logger.info(resp)
         stat = resp.get("status")
         if stat == "completed":
             bas64: str = resp.get("output")
