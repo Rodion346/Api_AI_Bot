@@ -34,7 +34,7 @@ async def niked(img_id: str, user_id: str):
             img64 = bas64.split(",")
             img6 = img64[1].strip()
             input_file = BufferedInputFile(img6, filename=f"{user_id}")
-            await bot.send_photo(chat_id=user_id, photo=input_file)
+            await bot.send_photo(chat_id=user_id, photo=img6)
         else: await asyncio.sleep(5)
 
 
