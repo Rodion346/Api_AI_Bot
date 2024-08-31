@@ -89,6 +89,6 @@ async def handle_webhook(
     await process_form_data(status, id_gen, time_gen, res_image)
     return JSONResponse(content={"message": "OK"}, status_code=200)
 
-@app.post("/")
+@app.get("/")
 async def handle_webhook():
     return {"status": "kaif"}
