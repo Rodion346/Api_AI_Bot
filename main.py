@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from sqladmin import Admin, ModelView
 
+
 from app.config import TOKEN_BOT
 
 app = FastAPI()
@@ -87,3 +88,7 @@ async def handle_webhook(
     print(type(res_image.file))
     await process_form_data(status, id_gen, time_gen, res_image)
     return JSONResponse(content={"message": "OK"}, status_code=200)
+
+@app.post("/")
+async def handle_webhook():
+    return {"status": "kaif"}
