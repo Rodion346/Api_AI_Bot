@@ -14,6 +14,6 @@ class UserService:
         query = await self.user_repo.read_user(user_id)
         return query
 
-    async def update(self, user_id: str, new_balance: int):
-        stmt = await self.user_repo.update_user_balance(user_id, new_balance)
+    async def update(self, user_id: str, new_balance: int, type_balance: int):
+        stmt = await self.user_repo.update_user_balance(user_id, new_balance, type_balance)
         return stmt

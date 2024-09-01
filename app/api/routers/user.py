@@ -1,14 +1,11 @@
 import asyncio
 import base64
-import subprocess
-from venv import logger
 
 import requests
 from aiogram import Bot
 from aiogram.types import BufferedInputFile
 from fastapi import APIRouter, Depends
-from flask import request
-from sqlalchemy.testing.suite.test_reflection import users
+
 from starlette.background import BackgroundTask
 from starlette.responses import JSONResponse
 
@@ -54,8 +51,8 @@ async def create_user(user: UserIn, user_service: UserService = Depends(get_user
     return user
 
 @router_user.post("/user/{user_id}", response_model=UserOut)
-async def update_user_balance(user_id: str, new_balance: int, user_service: UserService = Depends(get_user_service)):
-    user_info = await user_service.update(user_id, new_balance)
+async def update_user_balance(user_id: str, new_balance: int, type_balance: int, user_service: UserService = Depends(get_user_service)):
+    user_info = await user_service.update(user_id, new_balance, type_balance)
     return user_info
 
 @router_user.get("/user/{user_id}", response_model=UserOut)
