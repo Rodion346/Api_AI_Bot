@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.database import engine
 from app.api.models import User, Application
 from app.api.routers.user import router_user
+from app.api.routers.application import router_application
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from sqladmin import Admin, ModelView
@@ -36,7 +37,7 @@ app.add_middleware(
 )
 
 app.include_router(router_user)
-
+app.include_router(router_application)
 
 bot = Bot(token=TOKEN_BOT)
 
