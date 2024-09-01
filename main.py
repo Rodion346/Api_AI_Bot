@@ -5,7 +5,7 @@ from aiogram.types import InputFile, BufferedInputFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.database import engine
-from app.api.models import User
+from app.api.models import User, Application
 from app.api.routers.user import router_user
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
@@ -18,10 +18,14 @@ app = FastAPI()
 admin = Admin(app, engine)
 
 class UserAdmin(ModelView, model=User):
-    column_list = [User.id, User.balance, User.referer_id]
+    column_list = [User.id, User.processing_balance, User.referal_balance, User.referer_id]
+
+class ApplicationAdmin(ModelView, model=Application):
+    column_list = [Application.id, Application.amount, Application.to_address, Application.bank]
 
 
 admin.add_view(UserAdmin)
+admin.add_view(ApplicationAdmin)
 
 app.add_middleware(
     CORSMiddleware,
