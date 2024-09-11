@@ -1,20 +1,25 @@
 import io
+from typing import Optional, Union
+
 import aiofiles
 from aiogram import Bot, types
 from aiogram.types import InputFile, BufferedInputFile
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from app.api.database import engine
 from app.api.models import User, Application
-from app.api.routers.user import router_user
+from app.api.routers.user import router_user, update_user_balance
 from app.api.routers.application import router_application
 from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from sqladmin import Admin, ModelView
 
+from app.api.repositories.user import UserRepository
 
 from app.config import TOKEN_BOT
 
+user_repo = UserRepository()
 app = FastAPI()
 admin = Admin(app, engine)
 
@@ -41,7 +46,31 @@ app.include_router(router_application)
 
 bot = Bot(token=TOKEN_BOT)
 
+class PaymentModel(BaseModel):
+    type: str  # "payment"
+    invoiceId: str
+    sessionId: str
+    currency: str
+    amount: str
+    amountWithFee: str
+    paymentId: str
+    amountUsdt: str
+    amountUsdtWithFee: str
+    externalText: Optional[str] = None
+    timestampSeconds: str
+    signature: str
 
+class StatusModel(BaseModel):
+    type: str  # "status"
+    invoiceId: str
+    status: str
+    externalText: Optional[str] = None
+    timestampSeconds: str
+    signature: str
+
+# Универсальная модель, которая может быть либо PaymentModel, либо StatusModel
+class InvoiceCallbackModel(BaseModel):
+    __root__: Union[PaymentModel, StatusModel]
 
 # Обработчик ошибок
 def error_handler(error: str) -> None:
@@ -97,3 +126,30 @@ async def handle_webhook(
 @app.get("/")
 async def handle_webhook():
     return {"status": "kaif"}
+
+class CallbackRequest(BaseModel):
+    type: str
+    invoiceId: str
+    sessionId: str
+    currency: str
+    amount: str
+    amountWithFee: str
+    paymentId: Optional[str] = None
+    amountUsdt: Optional[str] = None
+    amountUsdtWithFee: Optional[str] = None
+    externalText: Optional[str] = None
+    status: Optional[str] = None
+    timestampSeconds: str
+    signature: str
+
+
+@app.post("/merchant/callback")
+async def handle_callback(callback: CallbackRequest):
+    callback_body = callback.dict()
+    id_chat = callback_body.get("externalText").split("_")[0]
+    await user_repo.update_user_balance(id_chat, int(callback_body.get("externalText").split("_")[1]), 1)
+    await bot.send_message(chat_id=id_chat, text=f"Баланс пополнен на {int(callback_body.get('externalText').split('_')[1])} обработок")
+    usr = await user_repo.read_user(id_chat)
+    if usr.referer_id != "0":
+        await user_repo.update_user_balance(usr.referer_id, int(int(callback_body.get("amount"))*0.3), 0)
+        await bot.send_message(usr.referer_id, f"Вам начислен бонус {int(int(callback_body.get('amount'))*0.3)} за пополнение реферала")
