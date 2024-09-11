@@ -42,7 +42,7 @@ class UserAdmin(ModelView, model=User):
     column_list = [User.id, User.processing_balance, User.referal_balance, User.referer_id]
 
 class ApplicationAdmin(ModelView, model=Application):
-    column_list = [Application.id, Application.amount, Application.to_address, Application.bank]
+    column_list = [Application.id, Application.amount, Application.to_address]
 
 
 admin.add_view(UserAdmin)
@@ -128,5 +128,5 @@ async def handle_callback(callback: CallbackRequest):
     await bot.send_message(chat_id=id_chat, text=f"Баланс пополнен на {int(callback_body.get('externalText').split('_')[1])} обработок")
     usr = await user_repo.read_user(id_chat)
     if usr.referer_id != "0":
-        await user_repo.update_user_balance(usr.referer_id, int(int(callback_body.get("amount"))*0.3), 0)
-        await bot.send_message(usr.referer_id, f"Вам начислен бонус {int(int(callback_body.get('amount'))*0.3)} за пополнение реферала")
+        await user_repo.update_user_balance(usr.referer_id, int(int(callback_body.get("amountUsdt"))*0.3), 0)
+        await bot.send_message(usr.referer_id, f"Вам начислен бонус {int(int(callback_body.get('amountUsdt'))*0.3)} USDT за пополнение реферала")

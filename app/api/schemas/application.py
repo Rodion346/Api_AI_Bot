@@ -9,5 +9,5 @@ class BaseApplication(BaseModel):
 class ApplicationIn(BaseApplication):
     amount: int
     to_address: str
-    bank: str
+
 

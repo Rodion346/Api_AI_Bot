@@ -18,4 +18,3 @@ class Application(Base):
     id: Mapped[str] = mapped_column(primary_key=True)
     amount: Mapped[int] = mapped_column(default=0)
     to_address: Mapped[str] = mapped_column(default="0")
-    bank: Mapped[str] = mapped_column(default='0')
