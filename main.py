@@ -19,6 +19,21 @@ from app.api.repositories.user import UserRepository
 
 from app.config import TOKEN_BOT
 
+class CallbackRequest(BaseModel):
+    type: str
+    invoiceId: str
+    sessionId: str
+    currency: str
+    amount: str
+    amountWithFee: str
+    paymentId: Optional[str] = None
+    amountUsdt: Optional[str] = None
+    amountUsdtWithFee: Optional[str] = None
+    externalText: Optional[str] = None
+    status: Optional[str] = None
+    timestampSeconds: str
+    signature: str
+
 user_repo = UserRepository()
 app = FastAPI()
 admin = Admin(app, engine)
@@ -46,31 +61,7 @@ app.include_router(router_application)
 
 bot = Bot(token=TOKEN_BOT)
 
-class PaymentModel(BaseModel):
-    type: str  # "payment"
-    invoiceId: str
-    sessionId: str
-    currency: str
-    amount: str
-    amountWithFee: str
-    paymentId: str
-    amountUsdt: str
-    amountUsdtWithFee: str
-    externalText: Optional[str] = None
-    timestampSeconds: str
-    signature: str
 
-class StatusModel(BaseModel):
-    type: str  # "status"
-    invoiceId: str
-    status: str
-    externalText: Optional[str] = None
-    timestampSeconds: str
-    signature: str
-
-# Универсальная модель, которая может быть либо PaymentModel, либо StatusModel
-class InvoiceCallbackModel(BaseModel):
-    __root__: Union[PaymentModel, StatusModel]
 
 # Обработчик ошибок
 def error_handler(error: str) -> None:
@@ -127,20 +118,6 @@ async def handle_webhook(
 async def handle_webhook():
     return {"status": "kaif"}
 
-class CallbackRequest(BaseModel):
-    type: str
-    invoiceId: str
-    sessionId: str
-    currency: str
-    amount: str
-    amountWithFee: str
-    paymentId: Optional[str] = None
-    amountUsdt: Optional[str] = None
-    amountUsdtWithFee: Optional[str] = None
-    externalText: Optional[str] = None
-    status: Optional[str] = None
-    timestampSeconds: str
-    signature: str
 
 
 @app.post("/merchant/callback")
